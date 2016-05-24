@@ -1,5 +1,6 @@
 /** Tests the <App> component.
  *  Always ask yourself what do you actually want to test.
+ *  What do we want to be so that another developer doesn't break it.
  *  Just text in there right now, so check that text is on the component.
  * **/
 import { renderComponent, expect } from '../test_helper';
