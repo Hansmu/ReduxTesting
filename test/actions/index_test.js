@@ -17,3 +17,5 @@ describe('Actions', () => {
         });
     });
 });
+
+//Command to run tests: npm run test:watch
