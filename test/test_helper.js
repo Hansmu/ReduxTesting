@@ -20,11 +20,12 @@ import jsdom from 'jsdom';
 import _$ from 'jquery'; //Use the underscore because this gives us more control over jQuery. Default doesn't understand how to find document.
 import TestUtils from 'react-addons-test-utils';
 import ReactDOM from 'react-dom';
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
 import React from 'react';//Wherever we use JSX we have to import React as well.
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import reducers from '../src/reducers'
+import chaiJquery from 'chai-jquery';
 //Create a fake HTML document and assign it to a global variable. Window scope is the global environment in a browser.
 //When we're using Node, we use global instead of window. It's the equivalent of assigning to a window
 global.document = jsdom.jsdom('<!doctype html><html><body></body></html>'); //Sets up our fake browser for the command line.
@@ -33,13 +34,27 @@ global.window = global.document.defaultView;
 const $ = _$(global.window); //We want you to be responsible for just the fake window we made. Don't try to find the window.
 
 //2) Build 'renderComponent' helper that should render a given React class.
-function renderComponent(ComponentClass) {
+function renderComponent(ComponentClass, props, state) {
   const componentInstance = TestUtils.renderIntoDocument(
-
-      <ComponentClass />
+      <Provider store={createStore(reducers, state)}>//Second argument is default state.
+        <ComponentClass {...props}/> //props={props} would show up as namedspaced this.props.props, not what we want. To get them as top level properties use the spread operator.
+      </Provider>
   ); //Rendered version of our React element.
   //jQuery is here so that we'd have the helper methods from chai-jQuery.
   return $(ReactDOM.findDOMNode(componentInstance)); //Produces HTML.
 }
+
+//3) Build helper for simulating events.
+$.fn.simulate = function(eventName, value) {
+  if(value) {
+    this.val(value);
+  }
+  //Square brackets to pass in different events on the fly. Don't reference a direct property using .change(), instead use the square brackets
+  //to reference object property.
+  TestUtils.Simulate[eventName](this[0]);//This refers to the element that the function was called on. Can return an array, so just choose the first element.
+}//Add function to jQuery with fn.
+
+//4) Set up chai-jQuery
+chaiJquery(chai, chai.util, $);
 
 export { renderComponent, expect };
