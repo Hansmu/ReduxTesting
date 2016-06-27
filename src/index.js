@@ -13,3 +13,5 @@ ReactDOM.render(
     <App />
   </Provider>
   , document.querySelector('.container'));
+
+//To run server: npm run start
