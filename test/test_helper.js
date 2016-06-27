@@ -30,14 +30,14 @@ import chaiJquery from 'chai-jquery';
 //When we're using Node, we use global instead of window. It's the equivalent of assigning to a window
 global.document = jsdom.jsdom('<!doctype html><html><body></body></html>'); //Sets up our fake browser for the command line.
 global.window = global.document.defaultView;
-//jQuery can't find the document by default, so we have to tell it how to do it
 const $ = _$(global.window); //We want you to be responsible for just the fake window we made. Don't try to find the window.
-
+//jQuery can't find the document by default, so we have to tell it how to do it
+function renderComponent(ComponentClass, props = {}, state = {}) {
 //2) Build 'renderComponent' helper that should render a given React class.
-function renderComponent(ComponentClass, props, state) {
-  const componentInstance = TestUtils.renderIntoDocument(
-      <Provider store={createStore(reducers, state)}>//Second argument is default state.
-        <ComponentClass {...props}/> //props={props} would show up as namedspaced this.props.props, not what we want. To get them as top level properties use the spread operator.
+  const componentInstance = TestUtils.renderIntoDocument(//Second argument is default state in store.
+      //props={props} would show up as namespaced this.props.props, not what we want. To get them as top level properties use the spread operator.
+      <Provider store={createStore(reducers, state)}>
+        <ComponentClass {...props}/>
       </Provider>
   ); //Rendered version of our React element.
   //jQuery is here so that we'd have the helper methods from chai-jQuery.
